@@ -18,3 +18,5 @@ section-sidenav =
     .tooltiptext = Incremental Reading
 section-read-next =
     .tooltiptext = Read next in queue
+menu-show-queue =
+    .label = Show Reading Queue

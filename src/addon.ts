@@ -1,6 +1,7 @@
 import { config } from "../package.json";
 import hooks from "./hooks";
 import * as queue from "./modules/queue";
+import { showQueue } from "./modules/queueView";
 import { createZToolkit } from "./utils/ztoolkit";
 
 class Addon {
@@ -18,7 +19,7 @@ class Addon {
   // Lifecycle hooks
   public hooks: typeof hooks;
   // APIs
-  public api: typeof queue;
+  public api: typeof queue & { showQueue: typeof showQueue };
 
   constructor() {
     this.data = {
@@ -29,7 +30,7 @@ class Addon {
       ztoolkit: createZToolkit(),
     };
     this.hooks = hooks;
-    this.api = queue;
+    this.api = { ...queue, showQueue };
   }
 }
 

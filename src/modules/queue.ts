@@ -132,12 +132,12 @@ export async function postpone(items: Zotero.Item[]) {
 }
 
 /**
- * Resolve queue entries to live items in queue order, dropping entries whose
+ * Resolve queue entries to live items, keeping their order and dropping entries whose
  * item was deleted and skipping items sitting in the trash.
  */
 async function resolveQueue(entries: QueueEntry[]) {
   const resolved: { entry: QueueEntry; item: Zotero.Item }[] = [];
-  for (const entry of [...entries].sort(compareEntries)) {
+  for (const entry of entries) {
     const item = (await Zotero.Items.getByLibraryAndKeyAsync(
       entry.libraryID,
       entry.itemKey,
@@ -154,15 +154,20 @@ async function resolveQueue(entries: QueueEntry[]) {
 
 export async function dueQueue() {
   const now = today();
-  return resolveQueue(allEntries().filter((e) => isDue(e, now)));
+  return resolveQueue(
+    allEntries()
+      .filter((e) => isDue(e, now))
+      .sort(compareEntries),
+  );
 }
 
-async function nextUpcoming() {
+/** Items not yet due, soonest first. */
+export async function upcomingQueue(limit = Infinity) {
   const now = today();
   const upcoming = allEntries()
     .filter((e) => !isDue(e, now))
     .sort((a, b) => a.due.localeCompare(b.due) || compareEntries(a, b));
-  return (await resolveQueue(upcoming.slice(0, 20)))[0];
+  return resolveQueue(upcoming.slice(0, limit));
 }
 
 function notify(
@@ -201,7 +206,7 @@ export async function readNext() {
     await openItem(next.item);
     return;
   }
-  const upcoming = await nextUpcoming();
+  const [upcoming] = await upcomingQueue(20);
   if (!upcoming) {
     notify(getString("notify-queue-empty"));
     return;

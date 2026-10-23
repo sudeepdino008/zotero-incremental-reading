@@ -13,6 +13,7 @@ import {
   removeItems,
   setPriority,
 } from "./queue";
+import { showQueue } from "./queueView";
 import { describeDue, today } from "./schedule";
 import { getEntry } from "./store";
 
@@ -126,6 +127,11 @@ export function registerMenus() {
         menuType: "menuitem",
         l10nID: getLocaleID("menu-read-next"),
         onCommand: () => void readNext(),
+      },
+      {
+        menuType: "menuitem",
+        l10nID: getLocaleID("menu-show-queue"),
+        onCommand: () => void showQueue(),
       },
     ],
   });

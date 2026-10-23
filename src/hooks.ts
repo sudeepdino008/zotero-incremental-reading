@@ -1,6 +1,7 @@
 import { initLocale } from "./utils/locale";
 import { createZToolkit } from "./utils/ztoolkit";
 import { closeStore, openStore } from "./modules/store";
+import { closeQueue } from "./modules/queueView";
 import {
   registerColumns,
   registerItemPaneSection,
@@ -66,6 +67,7 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 
 async function onShutdown(): Promise<void> {
   ztoolkit.unregisterAll();
+  closeQueue();
   await closeStore();
   // Remove addon object
   addon.data.alive = false;
