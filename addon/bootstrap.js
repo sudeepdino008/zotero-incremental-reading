@@ -27,9 +27,11 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
   const ctx = { rootURI };
   ctx._globalThis = ctx;
 
-  Services.scriptloader.loadSubScript(
+  // Bypass the startup cache: reinstalling over the same xpi path otherwise
+  // keeps running the previously compiled script
+  Services.scriptloader.loadSubScriptWithOptions(
     `${rootURI}/content/scripts/__addonRef__.js`,
-    ctx,
+    { target: ctx, ignoreCache: true },
   );
   await Zotero.__addonInstance__.hooks.onStartup();
 }
