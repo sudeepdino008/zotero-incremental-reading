@@ -1,0 +1,48 @@
+<linkset>
+  <html:link rel="localization" href="__addonRef__-preferences.ftl" />
+</linkset>
+<groupbox>
+  <label><html:h2 data-l10n-id="pref-title"></html:h2></label>
+  <hbox align="center">
+    <html:label
+      for="zotero-prefpane-__addonRef__-interval-multiplier"
+      data-l10n-id="pref-interval-multiplier"
+    ></html:label>
+    <html:input
+      type="text"
+      size="4"
+      id="zotero-prefpane-__addonRef__-interval-multiplier"
+      preference="intervalMultiplier"
+    ></html:input>
+  </hbox>
+  <hbox align="center">
+    <html:label
+      for="zotero-prefpane-__addonRef__-default-priority"
+      data-l10n-id="pref-default-priority"
+    ></html:label>
+    <html:input
+      type="text"
+      size="4"
+      id="zotero-prefpane-__addonRef__-default-priority"
+      preference="defaultPriority"
+    ></html:input>
+  </hbox>
+  <hbox align="center">
+    <html:label
+      for="zotero-prefpane-__addonRef__-first-interval"
+      data-l10n-id="pref-first-interval"
+    ></html:label>
+    <html:input
+      type="text"
+      size="4"
+      id="zotero-prefpane-__addonRef__-first-interval"
+      preference="firstInterval"
+    ></html:input>
+  </hbox>
+</groupbox>
+<vbox>
+  <html:label
+    data-l10n-id="pref-help"
+    data-l10n-args='{"time": "__buildTime__","name": "__addonName__","version":"__buildVersion__"}'
+  ></html:label>
+</vbox>

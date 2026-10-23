@@ -1,0 +1,11 @@
+.increading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-block: 4px;
+}
+
+.increading-priority {
+  width: 4em;
+}
