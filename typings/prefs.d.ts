@@ -7,7 +7,8 @@
 declare namespace _ZoteroTypes {
   interface Prefs {
     PluginPrefsMap: {
-      "intervalMultiplier": string;
+      "minMultiplier": string;
+      "maxMultiplier": string;
       "defaultPriority": string;
       "firstInterval": string;
     };

@@ -1,7 +1,7 @@
 {
   "name": "zotero-incremental-reading",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "SuperMemo-style incremental reading queue for Zotero",
   "config": {
     "addonName": "Incremental Reading",

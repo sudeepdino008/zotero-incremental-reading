@@ -7,6 +7,7 @@ import {
   compareEntries,
   isDue,
   nextInterval,
+  priorityMultiplier,
   postponeDays,
   today,
 } from "./schedule";
@@ -26,7 +27,7 @@ function notifyChange() {
 }
 
 function prefNumber(
-  key: "intervalMultiplier" | "defaultPriority" | "firstInterval",
+  key: "minMultiplier" | "maxMultiplier" | "defaultPriority" | "firstInterval",
   fallback: number,
 ) {
   const value = parseFloat(String(getPref(key)));
@@ -102,10 +103,12 @@ export async function setPriority(items: Zotero.Item[], priority: number) {
 /** Done reading for now: grow the interval and schedule the next reading. */
 export async function markRead(items: Zotero.Item[]) {
   const now = today();
-  const multiplier = prefNumber("intervalMultiplier", 1.5);
+  const min = prefNumber("minMultiplier", 1.2);
+  const max = prefNumber("maxMultiplier", 2);
   for (const item of uniqueTargets(items)) {
     const entry = getEntry(item);
     if (!entry) continue;
+    const multiplier = priorityMultiplier(entry.priority, min, max);
     const interval = nextInterval(entry.interval, multiplier);
     await putEntry({
       ...entry,

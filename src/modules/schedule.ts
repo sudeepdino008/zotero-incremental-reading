@@ -48,6 +48,14 @@ export function clampPriority(p: number): number {
 }
 
 /**
+ * Interval growth factor for a priority: important items (0) grow by `min`
+ * and keep coming back, unimportant ones (100) grow by `max` and fade away.
+ */
+export function priorityMultiplier(priority: number, min: number, max: number) {
+  return min + ((max - min) * clampPriority(priority)) / 100;
+}
+
+/**
  * Next interval after a reading: multiply by `multiplier` with ±10% jitter so
  * items added together drift apart, and always grow by at least one day.
  */

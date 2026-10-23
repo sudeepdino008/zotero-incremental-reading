@@ -11,7 +11,9 @@ next**; making flashcards is left to you.
   left off. If nothing is due, it offers to read ahead.
 - When you stop reading, use the **Incremental Reading** item-pane section:
   - **Done → Next**: reschedule, close the tab, open the next due item
-  - **Done**: reschedule (interval × 1.5 with ±10% jitter, at least +1 day)
+  - **Done**: reschedule; the interval grows by a factor set by priority,
+    from ×1.2 at priority 0 to ×2.0 at priority 100 (±10% jitter, at least
+    +1 day), so important items keep coming back and unimportant ones fade
   - **Postpone**: push back by half the interval without growing it
   - **Remove**: take it out of the queue
 - **IR Priority** and **IR Due** columns can be enabled in the item list
@@ -19,7 +21,7 @@ next**; making flashcards is left to you.
 
 The queue is the parent item; it opens the item's best attachment, or its URL.
 State lives in `<Zotero data dir>/incrementalreading.sqlite` and isn't synced.
-Interval multiplier, default priority and first interval are in Settings →
+Interval growth range, default priority and first interval are in Settings →
 Incremental Reading.
 
 ## Development

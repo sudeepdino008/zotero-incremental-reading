@@ -7,6 +7,7 @@ import {
   describeDue,
   nextInterval,
   postponeDays,
+  priorityMultiplier,
 } from "../src/modules/schedule";
 
 const entry = (priority: number, due: string): QueueEntry => ({
@@ -44,6 +45,13 @@ describe("schedule", function () {
       nextInterval(10, 1.5, () => 1),
       17,
     );
+  });
+
+  it("scales interval growth with priority", function () {
+    assert.closeTo(priorityMultiplier(0, 1.2, 2), 1.2, 1e-9);
+    assert.closeTo(priorityMultiplier(50, 1.2, 2), 1.6, 1e-9);
+    assert.closeTo(priorityMultiplier(100, 1.2, 2), 2, 1e-9);
+    assert.closeTo(priorityMultiplier(150, 1.2, 2), 2, 1e-9);
   });
 
   it("postpones by half an interval, at least one day", function () {
