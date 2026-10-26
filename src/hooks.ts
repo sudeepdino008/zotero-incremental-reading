@@ -3,13 +3,13 @@ import { createZToolkit } from "./utils/ztoolkit";
 import { closeStore, openStore } from "./modules/store";
 import { closeQueue } from "./modules/queueView";
 import {
-  addShortcutKey,
+  addShortcutKeys,
   registerColumns,
   registerItemPaneSection,
   registerMenus,
   registerPrefsPane,
   registerShortcut,
-  removeShortcutKey,
+  removeShortcutKeys,
 } from "./modules/ui";
 
 async function onStartup() {
@@ -62,7 +62,7 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   });
   win.document.documentElement?.appendChild(styles);
 
-  addShortcutKey(win);
+  addShortcutKeys(win);
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
@@ -71,7 +71,7 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 
 async function onShutdown(): Promise<void> {
   ztoolkit.unregisterAll();
-  Zotero.getMainWindows().forEach((win) => removeShortcutKey(win));
+  Zotero.getMainWindows().forEach((win) => removeShortcutKeys(win));
   closeQueue();
   await closeStore();
   // Remove addon object

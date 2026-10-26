@@ -3,6 +3,7 @@ import {
   addItems,
   defaultPriority,
   doneAndNext,
+  doneCurrentAndNext,
   entryFor,
   markRead,
   onQueueChange,
@@ -126,8 +127,16 @@ export function registerMenus() {
       {
         menuType: "menuitem",
         l10nID: getLocaleID("menu-read-next"),
-        onShowing: (_ev, ctx) => ctx.menuElem.setAttribute("key", KEY_ID),
+        onShowing: (_ev, ctx) =>
+          ctx.menuElem.setAttribute("key", SHORTCUTS.readNext.keyID),
         onCommand: () => void readNext(),
+      },
+      {
+        menuType: "menuitem",
+        l10nID: getLocaleID("menu-done-next"),
+        onShowing: (_ev, ctx) =>
+          ctx.menuElem.setAttribute("key", SHORTCUTS.doneNext.keyID),
+        onCommand: () => void doneCurrentAndNext(),
       },
       {
         menuType: "menuitem",
@@ -143,39 +152,57 @@ export function registerMenus() {
   }
 }
 
-const KEY_ID = "increading-key-read-next";
+const SHORTCUTS = {
+  readNext: {
+    keyID: "increading-key-read-next",
+    modifiers: "accel,alt",
+    run: readNext,
+  },
+  doneNext: {
+    keyID: "increading-key-done-next",
+    modifiers: "accel,alt,shift",
+    run: doneCurrentAndNext,
+  },
+};
+const KEYSET_ID = "increading-keyset";
 
 /**
- * The menu API has no shortcut field, so the Read Next menu item points at
- * this <key> to display ⌥⌘N. The key's command is empty: registerShortcut
- * handles the keypress, including inside reader tabs.
+ * The menu API has no shortcut field, so the Tools menu items point at these
+ * <key>s to display ⌥⌘N and ⇧⌥⌘N. The keys' commands are empty:
+ * registerShortcut handles the keypress, including inside reader tabs.
  */
-export function addShortcutKey(win: Window) {
+export function addShortcutKeys(win: Window) {
   const doc = win.document;
-  if (doc.getElementById(KEY_ID)) return;
+  if (doc.getElementById(KEYSET_ID)) return;
   const keyset = doc.createXULElement("keyset");
-  keyset.id = `${KEY_ID}-set`;
-  const key = doc.createXULElement("key");
-  key.id = KEY_ID;
-  key.setAttribute("key", "N");
-  key.setAttribute("modifiers", "accel,alt");
-  key.addEventListener("command", () => {});
-  keyset.append(key);
+  keyset.id = KEYSET_ID;
+  for (const { keyID, modifiers } of Object.values(SHORTCUTS)) {
+    const key = doc.createXULElement("key");
+    key.id = keyID;
+    key.setAttribute("key", "N");
+    key.setAttribute("modifiers", modifiers);
+    key.addEventListener("command", () => {});
+    keyset.append(key);
+  }
   doc.documentElement!.append(keyset);
 }
 
-export function removeShortcutKey(win: Window) {
-  win.document.getElementById(`${KEY_ID}-set`)?.remove();
+export function removeShortcutKeys(win: Window) {
+  win.document.getElementById(KEYSET_ID)?.remove();
 }
 
-/** Cmd/Ctrl+Alt+N opens the next due item, from the library or a reader. */
+/**
+ * Cmd/Ctrl+Alt+N opens the next due item and Cmd/Ctrl+Alt+Shift+N marks the
+ * current one done first, from the library or a reader.
+ */
 export function registerShortcut() {
   ztoolkit.Keyboard.register((ev, { type }) => {
     if (type !== "keydown" || ev.code !== "KeyN") return;
     const accel = Zotero.isMac ? ev.metaKey : ev.ctrlKey;
-    if (!accel || !ev.altKey || ev.shiftKey) return;
+    if (!accel || !ev.altKey) return;
+    const shortcut = ev.shiftKey ? SHORTCUTS.doneNext : SHORTCUTS.readNext;
     ev.preventDefault();
-    void readNext();
+    void shortcut.run();
   });
 }
 

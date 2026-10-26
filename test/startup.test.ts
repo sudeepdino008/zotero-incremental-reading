@@ -6,15 +6,17 @@ describe("startup", function () {
     assert.isNotEmpty(Zotero[config.addonInstance]);
   });
 
-  it("should show the read next shortcut in the tools menu", function () {
+  it("should show shortcuts in the tools menu", function () {
     const doc = Zotero.getMainWindow().document;
-    const key = doc.getElementById("increading-key-read-next");
-    assert.equal(key?.getAttribute("modifiers"), "accel,alt");
     const popup = doc.getElementById("menu_ToolsPopup")!;
     popup.dispatchEvent(new Event("popupshowing"));
-    const item = [...popup.querySelectorAll("menuitem")].find((m) =>
-      m.getAttribute("data-l10n-id")?.endsWith("menu-read-next"),
-    );
-    assert.equal(item?.getAttribute("key"), "increading-key-read-next");
+    const menuKey = (l10n: string) =>
+      [...popup.querySelectorAll("menuitem")]
+        .find((m) => m.getAttribute("data-l10n-id")?.endsWith(l10n))
+        ?.getAttribute("key");
+    const modifiers = (id?: string | null) =>
+      doc.getElementById(id!)?.getAttribute("modifiers");
+    assert.equal(modifiers(menuKey("menu-read-next")), "accel,alt");
+    assert.equal(modifiers(menuKey("menu-done-next")), "accel,alt,shift");
   });
 });

@@ -241,6 +241,26 @@ export async function doneAndNext(item: Zotero.Item) {
   await readNext();
 }
 
+/** The queued item being read: the open reader tab's, else the selected one. */
+function currentQueuedItem() {
+  const tabs = ztoolkit.getGlobal("Zotero_Tabs");
+  const reader = Zotero.Reader.getByTabID(tabs.selectedID);
+  const item = reader
+    ? Zotero.Items.get(reader.itemID!)
+    : ztoolkit.getGlobal("ZoteroPane").getSelectedItems()[0];
+  const target = queueTarget(item);
+  return target && getEntry(target) ? target : undefined;
+}
+
+export async function doneCurrentAndNext() {
+  const item = currentQueuedItem();
+  if (!item) {
+    notify(getString("notify-nothing-current"));
+    return;
+  }
+  await doneAndNext(item);
+}
+
 /** Ask for a priority; returns undefined if cancelled or not a number. */
 export function promptPriority(initial: number) {
   const value = { value: String(initial) };
