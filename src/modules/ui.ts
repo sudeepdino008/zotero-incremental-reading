@@ -126,6 +126,7 @@ export function registerMenus() {
       {
         menuType: "menuitem",
         l10nID: getLocaleID("menu-read-next"),
+        onShowing: (_ev, ctx) => ctx.menuElem.setAttribute("key", KEY_ID),
         onCommand: () => void readNext(),
       },
       {
@@ -140,6 +141,31 @@ export function registerMenus() {
   if (!itemMenu || !toolsMenu) {
     throw new Error("Failed to register Incremental Reading menus");
   }
+}
+
+const KEY_ID = "increading-key-read-next";
+
+/**
+ * The menu API has no shortcut field, so the Read Next menu item points at
+ * this <key> to display ⌥⌘N. The key's command is empty: registerShortcut
+ * handles the keypress, including inside reader tabs.
+ */
+export function addShortcutKey(win: Window) {
+  const doc = win.document;
+  if (doc.getElementById(KEY_ID)) return;
+  const keyset = doc.createXULElement("keyset");
+  keyset.id = `${KEY_ID}-set`;
+  const key = doc.createXULElement("key");
+  key.id = KEY_ID;
+  key.setAttribute("key", "N");
+  key.setAttribute("modifiers", "accel,alt");
+  key.addEventListener("command", () => {});
+  keyset.append(key);
+  doc.documentElement!.append(keyset);
+}
+
+export function removeShortcutKey(win: Window) {
+  win.document.getElementById(`${KEY_ID}-set`)?.remove();
 }
 
 /** Cmd/Ctrl+Alt+N opens the next due item, from the library or a reader. */
