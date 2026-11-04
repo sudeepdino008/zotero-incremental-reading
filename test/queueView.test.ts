@@ -10,9 +10,12 @@ describe("queue window", function () {
     due.setField("title", "Due book");
     const later = new Zotero.Item("book");
     later.setField("title", "Later book");
+    const note = new Zotero.Item("note");
+    note.setNote("<h1>Due note</h1><p>body</p>");
     await due.saveTx();
     await later.saveTx();
-    await api().addItems([due, later], 20);
+    await note.saveTx();
+    await api().addItems([due, later, note], 20);
     await api().markRead([later]);
 
     await api().showQueue();
@@ -29,6 +32,9 @@ describe("queue window", function () {
 
     assert.lengthOf(tables(), 2);
     assert.isTrue(titles(tables()[0]).some((t) => t.includes("Due book")));
+    assert.isTrue(
+      titles(tables()[0]).some((t) => t.includes("Due note — note")),
+    );
     assert.isTrue(titles(tables()[1]).some((t) => t.includes("Later book")));
 
     await api().removeItems([due]);
@@ -40,7 +46,8 @@ describe("queue window", function () {
     );
 
     win.close();
-    await api().removeItems([later]);
+    await api().removeItems([later, note]);
+    await note.eraseTx();
     await due.eraseTx();
     await later.eraseTx();
   });

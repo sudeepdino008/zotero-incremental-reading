@@ -33,6 +33,7 @@ export type FluentMessageId =
   | 'queue-col-title'
   | 'queue-due-heading'
   | 'queue-empty'
+  | 'queue-note'
   | 'queue-open-hint'
   | 'queue-remove'
   | 'queue-upcoming-heading'

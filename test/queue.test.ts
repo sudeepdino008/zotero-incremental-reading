@@ -38,6 +38,33 @@ describe("queue", function () {
     await item.eraseTx();
   });
 
+  it("queues standalone notes but not child notes", async function () {
+    const note = new Zotero.Item("note");
+    note.setNote("<p>Queued note</p>");
+    await note.saveTx();
+    const parent = new Zotero.Item("book");
+    await parent.saveTx();
+    const child = new Zotero.Item("note");
+    child.parentID = parent.id;
+    await child.saveTx();
+
+    await api().addItems([note, child], 20);
+    assert.equal(api().entryFor(note).priority, 20);
+    assert.isUndefined(api().entryFor(child));
+    assert.isUndefined(api().entryFor(parent));
+
+    await api().openItem(note);
+    const pane = Zotero.getActiveZoteroPane();
+    assert.deepEqual(
+      pane.getSelectedItems().map((i) => i.id),
+      [note.id],
+    );
+
+    await api().removeItems([note]);
+    await note.eraseTx();
+    await parent.eraseTx();
+  });
+
   it("drops entries whose item was deleted", async function () {
     const item = new Zotero.Item("book");
     await item.saveTx();

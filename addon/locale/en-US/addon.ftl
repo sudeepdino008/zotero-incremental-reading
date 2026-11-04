@@ -5,6 +5,7 @@ prompt-priority = Priority (0 = most important, 100 = least):
 prompt-read-ahead = Nothing is due today. Read ahead with “{ $title }” (due { $due })?
 notify-queue-empty = The reading queue is empty.
 notify-no-attachment = This item has no attachment or URL to open.
+queue-note = note
 notify-nothing-current = Open or select a queued item to mark it done.
 section-not-queued = Not queued
 section-summary = Due { $due }

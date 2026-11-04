@@ -40,11 +40,13 @@ export function defaultPriority() {
 
 /**
  * The unit of the queue is the top-level item: a parent item stands in for
- * its attachments, and notes and annotations can't be queued.
+ * its attachments, standalone notes are queued themselves, and child notes
+ * and annotations can't be queued.
  */
 export function queueTarget(item: Zotero.Item | false | undefined) {
   if (!item) return undefined;
   if (item.isRegularItem()) return item;
+  if (item.isNote()) return item.isTopLevelItem() ? item : undefined;
   if (item.isAttachment()) return item.parentItem ?? item;
   return undefined;
 }
@@ -185,10 +187,16 @@ function notify(
 }
 
 export async function openItem(item: Zotero.Item) {
+  const pane = ztoolkit.getGlobal("ZoteroPane");
+  // Selecting a note opens it in the item pane's note editor
+  if (item.isNote()) {
+    ztoolkit.getGlobal("Zotero_Tabs").select("zotero-pane");
+    await pane.selectItem(item.id);
+    return;
+  }
   const attachment = item.isAttachment()
     ? item
     : await item.getBestAttachment();
-  const pane = ztoolkit.getGlobal("ZoteroPane");
   if (attachment) {
     await pane.viewAttachment(attachment.id);
     return;

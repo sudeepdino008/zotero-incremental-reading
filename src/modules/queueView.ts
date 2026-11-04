@@ -42,6 +42,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
 }
 
 function itemSubtitle(item: Zotero.Item) {
+  if (item.isNote()) return getString("queue-note");
   const year = (item.getField("date", true, true) as string).slice(0, 4);
   return [item.firstCreator, year !== "0000" ? year : ""]
     .filter(Boolean)
